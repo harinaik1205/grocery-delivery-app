@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import Counter from "./counter";
+import Counter from "./counter.js";
 
 const orderSchema = new Schema({
   orderId: {
