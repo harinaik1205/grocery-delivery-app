@@ -84,77 +84,77 @@ const CustomerLogin = () => {
     }
   };
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <View style={styles.container}>
-        <CustomSafeAreaView>
-          <ProductSlider />
-          <PanGestureHandler onHandlerStateChange={handleGesture}>
-            <Animated.ScrollView
-              style={{ transform: [{ translateY: animatedValue }] }}
-              bounces={false}
-              keyboardDismissMode={'on-drag'}
-              keyboardShouldPersistTaps={'handled'}
-              contentContainerStyle={styles.subContainer}
-            >
-              <LinearGradient colors={bottomColors} style={styles.gradient} />
-              <View style={styles.content}>
-                <Image
-                  source={require('@assets/images/logo.jpeg')}
-                  style={styles.logo}
-                />
-                <CustomText variant="h2" fontFamily="">
-                  Grocery Delivery App
-                </CustomText>
-                <CustomText variant="h5" fontFamily={''}>
-                  Log in or sing up
-                </CustomText>
-                <CustomInput
-                  onChangeText={text => setPhoneNumber(text.slice(0, 10))}
-                  onClear={() => setPhoneNumber('')}
-                  value={phoneNumber}
-                  placeholder="Enter phone number"
-                  inputMode="numeric"
-                  left={
-                    <CustomText
-                      style={styles.phoneText}
-                      variant="h6"
-                      fontFamily={Fonts.SemiBold}
-                    >
-                      +91
-                    </CustomText>
-                  }
-                />
-                <CustomButton
-                  title="Continue"
-                  onPress={handleSendOtp}
-                  disabled={phoneNumber?.length != 10}
-                  loading={loading}
-                />
-              </View>
-            </Animated.ScrollView>
-          </PanGestureHandler>
-        </CustomSafeAreaView>
+    // <GestureHandlerRootView style={styles.container}>
+    <View style={styles.container}>
+      <CustomSafeAreaView>
+        <ProductSlider />
+        <PanGestureHandler onHandlerStateChange={handleGesture}>
+          <Animated.ScrollView
+            style={{ transform: [{ translateY: animatedValue }] }}
+            bounces={false}
+            keyboardDismissMode={'on-drag'}
+            keyboardShouldPersistTaps={'handled'}
+            contentContainerStyle={styles.subContainer}
+          >
+            <LinearGradient colors={bottomColors} style={styles.gradient} />
+            <View style={styles.content}>
+              <Image
+                source={require('@assets/images/logo.jpeg')}
+                style={styles.logo}
+              />
+              <CustomText variant="h2" fontFamily="">
+                Grocery Delivery App
+              </CustomText>
+              <CustomText variant="h5" fontFamily={''}>
+                Log in or sing up
+              </CustomText>
+              <CustomInput
+                onChangeText={text => setPhoneNumber(text.slice(0, 10))}
+                onClear={() => setPhoneNumber('')}
+                value={phoneNumber}
+                placeholder="Enter phone number"
+                inputMode="numeric"
+                left={
+                  <CustomText
+                    style={styles.phoneText}
+                    variant="h6"
+                    fontFamily={Fonts.SemiBold}
+                  >
+                    +91
+                  </CustomText>
+                }
+              />
+              <CustomButton
+                title="Continue"
+                onPress={handleSendOtp}
+                disabled={phoneNumber?.length != 10}
+                loading={loading}
+              />
+            </View>
+          </Animated.ScrollView>
+        </PanGestureHandler>
+      </CustomSafeAreaView>
 
-        <View style={styles.footer}>
-          {/* <SafeAreaView /> */}
-          <CustomText fonSize={RFValue(6)}>
-            By continuing, you agree to our Terms of service & Privacy
-          </CustomText>
-          {/* <SafeAreaView /> */}
-        </View>
-
-        <TouchableOpacity
-          onPress={() => resetAndNavigate('DeliveryLogin')}
-          style={styles.deliveryLoginBtn}
-        >
-          <MaterialCommunityIcon
-            name="bike-fast"
-            color={'#000'}
-            size={RFValue(18)}
-          />
-        </TouchableOpacity>
+      <View style={styles.footer}>
+        {/* <SafeAreaView /> */}
+        <CustomText fonSize={RFValue(6)}>
+          By continuing, you agree to our Terms of service & Privacy
+        </CustomText>
+        {/* <SafeAreaView /> */}
       </View>
-    </GestureHandlerRootView>
+
+      <TouchableOpacity
+        onPress={() => resetAndNavigate('DeliveryLogin')}
+        style={styles.deliveryLoginBtn}
+      >
+        <MaterialCommunityIcon
+          name="bike-fast"
+          color={'#000'}
+          size={RFValue(18)}
+        />
+      </TouchableOpacity>
+    </View>
+    // </GestureHandlerRootView>
   );
 };
 

@@ -18,6 +18,7 @@ export const customerLogin = async (phone: string) => {
     setUser(customer);
   } catch (error) {
     console.log('customer login error: ', error);
+    throw error;
   }
 };
 

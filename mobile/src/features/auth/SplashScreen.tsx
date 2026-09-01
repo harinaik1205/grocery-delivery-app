@@ -47,6 +47,7 @@ const SplashScreen = () => {
     const accessToken = tokenStorage.getString('accessToken');
     const refresh_token = tokenStorage.getString('refreshToken') as string;
 
+    console.log('accessToken', accessToken);
     if (accessToken) {
       const decodedAccessToken = jwtDecode<DecodedToken>(accessToken);
       const decodedRefreshToken = jwtDecode<DecodedToken>(refresh_token);
@@ -68,10 +69,13 @@ const SplashScreen = () => {
           return false;
         }
       }
+      console.log('user', user);
       if (user?.role === 'Customer') {
         resetAndNavigate('ProductDashboard');
+        return;
       } else {
         resetAndNavigate('DeliveryDashboard');
+        return;
       }
     }
 

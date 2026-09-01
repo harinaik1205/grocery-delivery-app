@@ -85,7 +85,7 @@ const DeliveryLogin = () => {
           />
 
           <CustomButton
-            disabled={email.length === 0 || password.length < 8}
+            disabled={email?.length === 0 || password?.length < 8}
             title="Login"
             onPress={handleLogin}
             loading={loading}

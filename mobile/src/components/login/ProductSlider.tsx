@@ -8,7 +8,7 @@ import { screenHeight, screenWidth } from '@utils/Scaling';
 const ProductSlider = () => {
   const rows = useMemo(() => {
     const result = [];
-    for (let i = 0; i < imageData.length; i += 4) {
+    for (let i = 0; i < imageData?.length; i += 4) {
       result.push(imageData.slice(i, i + 4));
     }
     return result;
