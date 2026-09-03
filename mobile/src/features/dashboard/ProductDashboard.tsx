@@ -37,6 +37,8 @@ import AnimatedHeader from '@components/dashboard/AnimatedHeader';
 import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 import StickySearchBar from '@components/dashboard/StickySearchBar';
 import Content from '@components/dashboard/Content';
+import withCart from '@features/cart/WithCart';
+import withLiveStatus from '@features/map/withLiveStatus';
 
 const NOTICE_HEIGHT = -(NoticeHeight + 12);
 
@@ -180,7 +182,9 @@ const ProductDashboard = () => {
   );
 };
 
-export default withCollapsibleContext(ProductDashboard);
+export default withLiveStatus(
+  withCart(withCollapsibleContext(ProductDashboard)),
+);
 
 const styles = StyleSheet.create({
   panelContainer: {

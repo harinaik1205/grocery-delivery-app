@@ -1,0 +1,86 @@
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { FC } from 'react';
+import { useAuthStore } from '@state/authStore';
+import IonIcon from 'react-native-vector-icons/Ionicons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { navigate } from '@utils/NavigationUtils';
+import CustomText from '@components/ui/CustomText';
+import { Fonts } from '@utils/Constants';
+
+interface Props {
+  type: 'Customer' | 'Delivery';
+  title: string;
+  secondTitle: string;
+}
+
+const LiveHeader: FC<Props> = ({ type, title, secondTitle }) => {
+  const isCustomer = type === 'Customer';
+
+  const { currentOrder, setCurrentOrder } = useAuthStore();
+  console.log('liveHeader', currentOrder);
+
+  return (
+    <SafeAreaView>
+      <View style={styles.headerContainer}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => {
+            if (isCustomer) {
+              navigate('ProductDashboard');
+              if (
+                currentOrder?.order?.status === 'delivered' ||
+                currentOrder?.status === 'delivered'
+              ) {
+                setCurrentOrder(null);
+              }
+              return;
+            }
+            navigate('DeliveryDashboard');
+          }}
+        >
+          <IonIcon
+            name="chevron-back"
+            size={RFValue(16)}
+            color={isCustomer ? '#fff' : '#000'}
+          />
+        </Pressable>
+
+        <CustomText
+          variant="h8"
+          fontFamily={Fonts.Medium}
+          style={isCustomer ? styles.titleTextWhite : styles.titleTextBlack}
+        >
+          {title}
+        </CustomText>
+        <CustomText
+          variant="h4"
+          fontFamily={Fonts.SemiBold}
+          style={isCustomer ? styles.titleTextWhite : styles.titleTextBlack}
+        >
+          {secondTitle}
+        </CustomText>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+export default LiveHeader;
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 20,
+  },
+  titleTextBlack: {
+    color: 'black',
+  },
+  titleTextWhite: {
+    color: 'white',
+  },
+});

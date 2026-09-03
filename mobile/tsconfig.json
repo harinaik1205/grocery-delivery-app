@@ -10,7 +10,7 @@
       // "*":["src/*"],
       "@assets/*": ["assets/*"],
       "@features/*": ["features/*"],
-      "@service/*": ["service/*"],
+      "@services/*": ["services/*"],
       "@styles/*": ["styles/*"],
       "@navigation/*": ["navigation/*"],
       "@components/*": ["components/*"],

@@ -15,7 +15,7 @@ interface AuthStore {
   setUser: (user: Record<string, any>) => void;
 
   currentOrder: Record<string, any> | null;
-  setCurrentOrder: (order: Record<string, any>) => void;
+  setCurrentOrder: (order: Record<string, any> | null) => void;
 
   logout: () => void;
 }

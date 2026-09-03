@@ -9,6 +9,7 @@ import {
 } from '../../services/productServices';
 import ProductList from './ProductList';
 import axios from 'axios';
+import withCart from '@features/cart/WithCart';
 
 const ProductCategories = () => {
   const [categories, setCategories] = React.useState<any[]>([]);
@@ -84,7 +85,7 @@ const ProductCategories = () => {
   );
 };
 
-export default ProductCategories;
+export default withCart(ProductCategories);
 
 const styles = StyleSheet.create({
   mainContainer: {
