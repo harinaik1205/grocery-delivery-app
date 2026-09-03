@@ -12,7 +12,8 @@ export const createOrder = async (req, reply) => {
 
     const customerData = await Customer.findById(userId);
     const branchData = await Branch.findById(branch);
-
+    console.log("userId", userId);
+    console.log("customerData", customerData);
     if (!customerData) {
       return reply.status(404).send({
         message: "user not found",
@@ -33,6 +34,11 @@ export const createOrder = async (req, reply) => {
         longitude: customerData.liveLocation.longitude,
         address: customerData.address || "No address available",
       },
+      // deliveryPersonLocation: {
+      //   latitude: customerData.liveLocation.latitude,
+      //   longitude: customerData.liveLocation.longitude,
+      //   address: customerData.address || "No address available",
+      // },
       pickupLocation: {
         latitude: branchData.location.latitude,
         longitude: branchData.location.longitude,
@@ -40,15 +46,25 @@ export const createOrder = async (req, reply) => {
       },
     });
 
-    const savedOrder = await newOrder.save();
-    return reply.status(201).send({
-      message: "Order created successfully",
-      order: savedOrder,
-    });
+    let savedOrder = await newOrder.save();
+    savedOrder = await savedOrder.populate([
+      { path: "customer" },
+      {
+        path: "branch",
+      },
+      {
+        path: "items.item",
+      },
+      {
+        path: "deliveryPartner",
+      },
+    ]);
+    return reply.status(201).send(savedOrder);
   } catch (error) {
     return reply.status(500).send({
       message: error,
     });
+    console.log("error order", error);
   }
 };
 
@@ -170,7 +186,9 @@ export const getOrderById = async (req, reply) => {
       return reply.status(400).send({ message: "orderId is required" });
     }
 
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId).populate(
+      "customer branch items.item deliveryPartner",
+    );
 
     if (!order) {
       return reply.status(404).send({ message: "Order not found" });
