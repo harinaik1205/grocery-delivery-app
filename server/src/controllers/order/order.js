@@ -4,6 +4,15 @@ import {
   Customer,
   DeliveryPartner,
 } from "../../models/index.js";
+import { sendNotification } from "../../utils/helper.js";
+
+const STATUS_MESSAGES = {
+  accepted: "Your order has been accepted by the delivery partner.",
+  pickedup: "Your order has been picked up and is on its way.",
+  arriving: "Your delivery partner is on the way.",
+  delivered: "Your order has been delivered. Enjoy!",
+  cancelled: "Your order has been cancelled.",
+};
 
 export const createOrder = async (req, reply) => {
   try {
@@ -59,6 +68,16 @@ export const createOrder = async (req, reply) => {
         path: "deliveryPartner",
       },
     ]);
+    sendNotification(userId, "customer", {
+      title: "Order Created",
+      body: `Your order #${newOrder?._id} has been ${newOrder?.status}.`,
+    });
+
+    sendNotification("6a873e6c1e4b7c320caa9166", "deliveryPartner", {
+      title: "New Order",
+      body: "Please accept the order within 300 seconds",
+    });
+
     return reply.status(201).send(savedOrder);
   } catch (error) {
     return reply.status(500).send({
@@ -71,7 +90,7 @@ export const createOrder = async (req, reply) => {
 export const confirmOrder = async (req, reply) => {
   try {
     const { orderId } = req.params;
-    const { userId } = req.user;
+    const { userId, role } = req.user;
     const { deliveryPersonLocation } = req.body;
 
     const deliveryPerson = await DeliveryPartner.findById(userId);
@@ -89,17 +108,24 @@ export const confirmOrder = async (req, reply) => {
       return reply.status(400).send({ message: "Order is not available" });
     }
 
-    order.status === "confirmed";
+    order.status = "confirmed";
     order.deliveryPartner = userId;
     order.deliveryLocation = {
       latitude: deliveryPersonLocation?.latitude,
       longitude:
         deliveryPersonLocation?.longitude || deliveryPersonLocation?.logitude,
-      address: deliveryPersonLocation.address || "",
+      address: deliveryPersonLocation?.address || "",
     };
+    console.log("confirmOrder", order);
 
     req.server.io.to(orderId).emit("orderConfirmed", order);
     await order.save();
+    sendNotification(order.customer, "customer", {
+      title: "Order Confirmed",
+      body: `Your order #${order?._id} has been ${order.status}.`,
+    });
+
+    console.log("order confirmed", order);
 
     return reply.send(order);
   } catch (error) {
@@ -140,6 +166,10 @@ export const updateOrderStatus = async (req, reply) => {
     await order.save();
 
     req.server.io.to(orderId).emit("liveTrackingUpdates", order);
+    sendNotification(order.customer, "customer", {
+      title: "Order Update",
+      body: STATUS_MESSAGES[status] ?? `Your order status is now ${status}.`,
+    });
 
     return reply.send(order);
   } catch (error) {

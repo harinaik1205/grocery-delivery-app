@@ -11,7 +11,8 @@ import { Fonts } from '@utils/Constants';
 import WalletSection from './WalletSection';
 import ActionButton from './ActionButton';
 import { storage, tokenStorage } from '@state/storage';
-import { resetAndNavigate } from '@utils/NavigationUtils';
+import { navigate, resetAndNavigate } from '@utils/NavigationUtils';
+import { getMessaging } from '@react-native-firebase/messaging';
 
 const Profile = () => {
   const [orders, setOrders] = useState([]);
@@ -47,7 +48,11 @@ const Profile = () => {
           YOUR INFORMATION
         </CustomText>
 
-        <ActionButton icon="book-outline" label="Address book" />
+        <ActionButton
+          icon="book-outline"
+          label="Address book"
+          onPress={() => navigate('AddressBook')}
+        />
         <ActionButton icon="information-circle-outline" label="About us" />
         <ActionButton
           icon="log-out-outline"
@@ -57,6 +62,7 @@ const Profile = () => {
             logout();
             tokenStorage.clearAll();
             storage.clearAll();
+            getMessaging().deleteToken();
             resetAndNavigate('CustomerLogin');
           }}
         />

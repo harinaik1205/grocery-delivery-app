@@ -31,6 +31,7 @@ const customerSchema = new Schema({
   address: {
     type: String,
   },
+  fcmToken: { type: String },
 });
 
 const deliveryPartnerSchema = new Schema({
@@ -62,6 +63,7 @@ const deliveryPartnerSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Branch",
   },
+  fcmToken: { type: String },
 });
 
 const adminSchema = new Schema({

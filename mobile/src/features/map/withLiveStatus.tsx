@@ -18,7 +18,7 @@ const withLiveStatus = <P extends object>(
       state => state.routes[state.index]?.name,
     );
 
-    console.log('curOrder', currentOrder);
+    // console.log('curOrder', currentOrder);
 
     const fetchOrderDetails = async () => {
       const data = await getOrderById(currentOrder?._id);
@@ -38,7 +38,7 @@ const withLiveStatus = <P extends object>(
         });
         socketInstance.on('orderConfirmed', confirmOrder => {
           fetchOrderDetails();
-          console.log('ORDER CONFIRMATION LIVE UPDATES');
+          // console.log('ORDER CONFIRMATION LIVE UPDATES');
         });
 
         return () => {

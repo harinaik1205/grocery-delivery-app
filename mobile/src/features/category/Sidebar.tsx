@@ -60,7 +60,7 @@ const Sidebar: FC<SidebarProps> = ({
     transform: [{ translateY: indicatorPosition.value }],
   }));
 
-  console.log('selectedCategory', selectedCategory);
+  // console.log('selectedCategory', selectedCategory);
 
   return (
     <View style={styles.sidebar}>

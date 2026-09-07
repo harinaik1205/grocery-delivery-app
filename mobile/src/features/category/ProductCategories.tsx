@@ -23,7 +23,7 @@ const ProductCategories = () => {
       try {
         setCategoriesLoading(true);
         const data = await getAllCategories();
-        console.log('cats data', data);
+        // console.log('cats data', data);
         setCategories(data.categories);
         if (data && data?.categories?.length > 0) {
           setSelectedCategory(data.categories[0]);
@@ -45,9 +45,9 @@ const ProductCategories = () => {
     try {
       setProductsLoading(true);
       const response = await getProductsByCategoryId(selectedCategory?._id);
-      console.log('===========');
-      console.log('prods reponse', response);
-      console.log('===========');
+      // console.log('===========');
+      // console.log('prods reponse', response);
+      // console.log('===========');
       setProducts(response.products);
     } catch (error) {
       console.log('error while fetching products', error);
@@ -56,7 +56,7 @@ const ProductCategories = () => {
     }
   };
 
-  console.log('cats', selectedCategory);
+  // console.log('cats', selectedCategory);
 
   return (
     <View style={styles.mainContainer}>

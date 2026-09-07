@@ -5,12 +5,14 @@ import { PORT } from "./src/config/config.js";
 import fastifySocketIO from "@wick_studio/fastify-socket.io";
 import { registerRoutes } from "./src/routes/index.js";
 import { admin, buildAdminRouter } from "./src/config/setup.js";
+import { initializeFirebaseApp } from "./src/config/firebase.js";
 
 const start = async () => {
   try {
     await connectDB(process.env.MONGODB_URI);
 
     const app = fastify();
+    const firebaseApp = initializeFirebaseApp();
 
     app.register(fastifySocketIO, {
       cors: {

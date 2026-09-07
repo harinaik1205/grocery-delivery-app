@@ -34,7 +34,7 @@ const CategoryContainer: FC<Props> = ({ categories }) => {
               key={index}
               style={styles.item}
               onPress={() => {
-                console.log('category pressed', item);
+                // console.log('category pressed', item);
                 navigate('ProductCategories');
               }}
             >

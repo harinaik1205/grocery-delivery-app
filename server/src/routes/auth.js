@@ -3,6 +3,7 @@ import {
   loginCustomer,
   loginDeliveryPartner,
   refreshToken,
+  saveFcmToken,
 } from "../controllers/auth/auth.js";
 import { updateUser } from "../controllers/tracking/user.js";
 import { verifyToken } from "../middleware/auth.js";
@@ -13,4 +14,5 @@ export const authRoutes = async (fastify, options) => {
   fastify.post("/refresh-token", refreshToken);
   fastify.get("/user", { preHandler: [verifyToken] }, fetchUser);
   fastify.patch("/user", { preHandler: [verifyToken] }, updateUser);
+  fastify.post("/save-token", { preHandler: [verifyToken] }, saveFcmToken);
 };

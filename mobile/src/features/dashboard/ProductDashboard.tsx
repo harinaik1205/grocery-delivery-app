@@ -34,11 +34,12 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import CustomText from '@components/ui/CustomText';
 import { Fonts } from '@utils/Constants';
 import AnimatedHeader from '@components/dashboard/AnimatedHeader';
-import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
+// import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 import StickySearchBar from '@components/dashboard/StickySearchBar';
 import Content from '@components/dashboard/Content';
 import withCart from '@features/cart/WithCart';
 import withLiveStatus from '@features/map/withLiveStatus';
+import { requestNotifications } from '@services/notifications';
 
 const NOTICE_HEIGHT = -(NoticeHeight + 12);
 
@@ -94,6 +95,12 @@ const ProductDashboard = () => {
     };
 
     updateUser();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      await requestNotifications();
+    })();
   }, []);
 
   useEffect(() => {

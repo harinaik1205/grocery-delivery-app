@@ -159,3 +159,35 @@ export const fetchUser = async (req, reply) => {
     });
   }
 };
+
+export const saveFcmToken = async (req, reply) => {
+  const { userId, role } = req.user;
+  const { fcmToken } = req.body;
+  console.log("user fcm", userId);
+  try {
+    let user;
+    if (role === "Customer") {
+      user = await Customer.findById(userId);
+    } else if (role === "DeliveryPartner") {
+      user = await DeliveryPartner.findById(userId);
+    } else {
+      return reply.status(403).send({ message: "Invalid role" });
+    }
+    if (!user) {
+      return reply.status(404).send({
+        message: "User not found",
+      });
+    }
+    user.fcmToken = fcmToken;
+    await user.save();
+    console.log("user", user);
+
+    return reply.status(200).send({
+      message: "Fcm token saved successfully",
+    });
+  } catch (error) {
+    return reply.status(500).send({
+      message: error,
+    });
+  }
+};

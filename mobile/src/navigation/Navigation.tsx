@@ -13,6 +13,9 @@ import ProductOrder from '@features/order/ProductOrder';
 import OrderSuccess from '@features/order/OrderSuccess';
 import LiveTracking from '@features/map/LiveTracking';
 import Profile from '@features/profile/Profile';
+import DeliveryMap from '@features/delivery/DeliveryMap';
+import AddressBookScreen from '@features/profile/AddressBookScreen';
+import SelectLocationScreen from '@features/profile/SelectLocation';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +50,9 @@ const Navigation = () => {
         <Stack.Screen name="OrderSuccess" component={OrderSuccess} />
         <Stack.Screen name="LiveTracking" component={LiveTracking} />
         <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="AddressBook" component={AddressBookScreen} />
+        <Stack.Screen name="SelectLocation" component={SelectLocationScreen} />
+        <Stack.Screen name="DeliveryMap" component={DeliveryMap} />
       </Stack.Navigator>
     </NavigationContainer>
   );

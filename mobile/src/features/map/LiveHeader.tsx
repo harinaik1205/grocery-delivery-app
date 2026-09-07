@@ -11,14 +11,14 @@ import { Fonts } from '@utils/Constants';
 interface Props {
   type: 'Customer' | 'Delivery';
   title: string;
-  secondTitle: string;
+  secondTitle?: string;
 }
 
 const LiveHeader: FC<Props> = ({ type, title, secondTitle }) => {
   const isCustomer = type === 'Customer';
 
   const { currentOrder, setCurrentOrder } = useAuthStore();
-  console.log('liveHeader', currentOrder);
+  // console.log('liveHeader', currentOrder);
 
   return (
     <SafeAreaView>
@@ -53,13 +53,15 @@ const LiveHeader: FC<Props> = ({ type, title, secondTitle }) => {
         >
           {title}
         </CustomText>
-        <CustomText
-          variant="h4"
-          fontFamily={Fonts.SemiBold}
-          style={isCustomer ? styles.titleTextWhite : styles.titleTextBlack}
-        >
-          {secondTitle}
-        </CustomText>
+        {secondTitle && (
+          <CustomText
+            variant="h4"
+            fontFamily={Fonts.SemiBold}
+            style={isCustomer ? styles.titleTextWhite : styles.titleTextBlack}
+          >
+            {secondTitle}
+          </CustomText>
+        )}
       </View>
     </SafeAreaView>
   );

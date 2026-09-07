@@ -22,8 +22,8 @@ const CustomInput: FC<
     <View style={styles.flexRow}>
       {left}
       <TextInput
-        {...props}
         style={styles.inputContainer}
+        {...props}
         placeholderTextColor="#ccc"
       />
       <View style={styles.icon}>
@@ -74,5 +74,6 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     shadowColor: Colors.border,
     borderColor: Colors.border,
+    paddingHorizontal: 10,
   },
 });
