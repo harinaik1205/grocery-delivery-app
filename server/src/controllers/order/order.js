@@ -71,11 +71,13 @@ export const createOrder = async (req, reply) => {
     sendNotification(userId, "customer", {
       title: "Order Created",
       body: `Your order #${newOrder?._id} has been ${newOrder?.status}.`,
+      orderId: newOrder?._id,
     });
 
     sendNotification("6a873e6c1e4b7c320caa9166", "deliveryPartner", {
       title: "New Order",
       body: "Please accept the order within 300 seconds",
+      orderId: newOrder?._id,
     });
 
     return reply.status(201).send(savedOrder);
@@ -123,6 +125,7 @@ export const confirmOrder = async (req, reply) => {
     sendNotification(order.customer, "customer", {
       title: "Order Confirmed",
       body: `Your order #${order?._id} has been ${order.status}.`,
+      orderId: order?._id || orderId,
     });
 
     console.log("order confirmed", order);
@@ -169,6 +172,7 @@ export const updateOrderStatus = async (req, reply) => {
     sendNotification(order.customer, "customer", {
       title: "Order Update",
       body: STATUS_MESSAGES[status] ?? `Your order status is now ${status}.`,
+      orderId: order?._id || orderId,
     });
 
     return reply.send(order);

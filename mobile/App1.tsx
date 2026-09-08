@@ -28,10 +28,12 @@ import {
   isAndroid,
   isIos,
   requestNotificationPermissions,
+  setNotificationHandler,
 } from '@services/notificationHelpers';
 import { openSettings } from 'react-native-permissions';
 import SplashScreen from '@features/auth/SplashScreen';
 import { getMessaging } from '@react-native-firebase/messaging';
+import { tokenStorage } from '@state/storage';
 
 function App1() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -75,6 +77,27 @@ function App1() {
         },
       );
     }
+  }, []);
+
+  useEffect(() => {
+    const accessToken = tokenStorage.getString('accessToken');
+    if (!accessToken) {
+      console.log('Please Login');
+      return;
+    }
+    let unsubscribe: any;
+
+    const setNotifications = async () => {
+      unsubscribe = await setNotificationHandler();
+    };
+
+    setNotifications();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   return (

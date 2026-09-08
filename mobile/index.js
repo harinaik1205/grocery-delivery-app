@@ -11,6 +11,16 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from 'react-native-reanimated';
+import {
+  getMessaging,
+  setBackgroundMessageHandler,
+} from '@react-native-firebase/messaging';
+
+const messaging = getMessaging();
+// Register background handler
+setBackgroundMessageHandler(messaging, async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
+});
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,

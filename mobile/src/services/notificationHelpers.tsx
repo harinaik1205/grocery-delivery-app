@@ -2,7 +2,7 @@ import {
   AuthorizationStatus,
   getMessaging,
 } from '@react-native-firebase/messaging';
-import { Platform } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import {
   requestNotifications,
   RESULTS,
@@ -10,10 +10,43 @@ import {
   checkNotifications,
 } from 'react-native-permissions';
 import { saveFcmToken } from './notification.services';
+import notifee, {
+  AndroidImportance,
+  EventType,
+  Notification,
+} from '@notifee/react-native';
+import { navigate } from '@utils/NavigationUtils';
 
 export const isIos = () => Platform.OS === 'ios';
 export const isAndroid = () => Platform.OS === 'android';
 export const getPlatFormVersion = () => Number(Platform.Version);
+
+export const channelId = 'orderStatus';
+export const channelName = 'Order Status';
+
+export const showForeGroundNotification = (message: any) => {
+  if (!message || !message?.notification) return;
+
+  const { title, body } = message.notification;
+  const { type } = message?.data;
+
+  const obj: Notification = {
+    title,
+    body,
+    android: {
+      channelId,
+      importance: AndroidImportance.HIGH,
+      pressAction: {
+        id: 'default',
+      },
+    },
+  };
+  if (type) {
+    obj.data = { type };
+  }
+
+  notifee.displayNotification(obj);
+};
 
 export const checkNotificationPermissionStatus = async (): Promise<boolean> => {
   //   return new Promise(async (resolve, reject) => {
@@ -50,15 +83,77 @@ export const setNotificationHandler = async () => {
   if (!granted) return;
   //for ios
   await getMessaging().registerDeviceForRemoteMessages();
-  let token;
-  if (isIos()) {
-    token = await getMessaging().getAPNSToken();
-  } else {
-    token = await getMessaging().getToken();
-  }
+
+  const token = await getMessaging().getToken();
+
   await saveFcmToken(token as string);
 
-  getMessaging().onTokenRefresh(async token => {
+  const unsubscribeTokenRefresh = getMessaging().onTokenRefresh(async token => {
+    console.log('Saving new fcm token');
     await saveFcmToken(token);
   });
+
+  //create channel for android
+  notifee.isChannelCreated(channelId).then(isCreated => {
+    if (!isCreated) {
+      notifee.createChannel({
+        id: channelId,
+        name: channelName,
+        sound: 'default',
+      });
+    }
+  });
+
+  //Handle Local notification click on foreground state
+
+  const unsubscribeNotifee = notifee.onForegroundEvent(({ type, detail }) => {
+    switch (type) {
+      case EventType.DISMISSED:
+        Alert.alert('user dismissed notification', detail?.notification?.title);
+        break;
+      case EventType.PRESS:
+        const { type } = (detail?.notification?.data ?? {}) as {
+          type?: string;
+        };
+        switch (type) {
+          case 'orderStatus':
+            navigate('LiveTracking');
+            break;
+
+          default:
+            break;
+        }
+      default:
+        break;
+    }
+  });
+
+  //foreground state message handler
+  const unsubscribeMessage = getMessaging().onMessage(remoteMessage => {
+    console.log('A new FCM message arrived in foreground!', remoteMessage);
+    showForeGroundNotification(remoteMessage);
+  });
+
+  //Handle the click of notification in case of app background
+  // background state notification message handler
+  const unsubscribeNotificationOpened = getMessaging().onNotificationOpenedApp(
+    remoteMessage => {
+      if (remoteMessage?.data) {
+        const type = remoteMessage?.data?.type;
+        switch (type) {
+          case 'orderStatus':
+            navigate('LiveTracking');
+            break;
+          default:
+            break;
+        }
+      }
+    },
+  );
+  return () => {
+    unsubscribeTokenRefresh();
+    unsubscribeMessage();
+    unsubscribeNotificationOpened();
+    unsubscribeNotifee();
+  };
 };

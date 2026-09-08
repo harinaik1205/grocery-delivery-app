@@ -11,6 +11,7 @@ import CustomInput from '@components/ui/CustomInput';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import { RFValue } from 'react-native-responsive-fontsize';
 import CustomButton from '@components/ui/CustomButton';
+import { syncFcmToken } from '@services/notification.services';
 
 const DeliveryLogin = () => {
   const [email, setEmail] = useState('');
@@ -21,6 +22,7 @@ const DeliveryLogin = () => {
     setLoading(true);
     try {
       await deliveryLogin(email, password);
+      await syncFcmToken();
       resetAndNavigate('DeliveryDashboard');
     } catch (error: any) {
       Alert.alert('Login Failed', error?.message ?? error);

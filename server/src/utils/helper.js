@@ -31,6 +31,10 @@ export const sendNotification = async (
           "https://res.cloudinary.com/deyffbvwb/image/upload/v1788766061/appstore_igvjjb.jpg",
       },
       token: user.fcmToken,
+      data: {
+        type: "orderStatus",
+        orderId: `${message?.orderId}`,
+      },
     };
 
     // const response = await admin.messaging().send(payload);
@@ -38,5 +42,15 @@ export const sendNotification = async (
     console.log("Sucessfully sent message", response);
   } catch (error) {
     console.log("Error sending message:", error);
+    if (error.code === "messaging/registration-token-not-registered") {
+      await user.updateOne(
+        { _id: userId },
+        {
+          $unset: {
+            fcmToken: "",
+          },
+        },
+      );
+    }
   }
 };

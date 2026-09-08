@@ -29,6 +29,7 @@ import CustomButton from '@components/ui/CustomButton';
 import { customerLogin } from '../../services/authServices';
 const bottomColors = [...lightColors].reverse();
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { syncFcmToken } from '@services/notification.services';
 const CustomerLogin = () => {
   const [gestureSequence, setGestureSequence] = useState<string[]>([]);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -57,6 +58,7 @@ const CustomerLogin = () => {
     setLoading(true);
     try {
       await customerLogin(phoneNumber);
+      await syncFcmToken();
       resetAndNavigate('ProductDashboard');
     } catch (error: any) {
       Alert.alert('Login Failed', error?.message || error);

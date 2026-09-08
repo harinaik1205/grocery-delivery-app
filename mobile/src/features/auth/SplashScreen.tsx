@@ -10,6 +10,10 @@ import { useAuthStore } from '@state/authStore';
 import { tokenStorage } from '@state/storage';
 import { jwtDecode } from 'jwt-decode';
 import { refetchUser, refreshToken } from '../../services/authServices';
+import {
+  getInitialNotification,
+  getMessaging,
+} from '@react-native-firebase/messaging';
 
 GeoLocation.setRNConfiguration({
   skipPermissionRequests: false,
@@ -26,9 +30,27 @@ const SplashScreen = () => {
   const { user, setUser } = useAuthStore();
 
   useEffect(() => {
+    getMessaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage?.data) {
+          const type = remoteMessage?.data?.type;
+
+          switch (type) {
+            case 'orderStatus':
+              navigate('LiveTracking');
+              break;
+
+            default:
+              break;
+          }
+        }
+      });
+  }, []);
+
+  useEffect(() => {
     const initialStartup = () => {
       try {
-        GeoLocation.requestAuthorization();
         tokenCheck();
       } catch (error) {
         Alert.alert(

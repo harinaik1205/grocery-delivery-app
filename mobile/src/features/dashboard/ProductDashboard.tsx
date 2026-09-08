@@ -80,6 +80,7 @@ const ProductDashboard = () => {
     }).start();
   };
   useEffect(() => {
+    Geolocation.requestAuthorization();
     const updateUser = () => {
       Geolocation.getCurrentPosition(
         position => {
