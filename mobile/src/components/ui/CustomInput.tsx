@@ -14,10 +14,12 @@ interface CustomInputProps {
   left: React.ReactNode;
   onClear?: () => void;
   right?: boolean;
+  query?: string;
+  setQuery?: (text: string) => void;
 }
 const CustomInput: FC<
   CustomInputProps & React.ComponentProps<typeof TextInput>
-> = ({ left, onClear, right, ...props }) => {
+> = ({ left, onClear, right, query, setQuery, ...props }) => {
   return (
     <View style={styles.flexRow}>
       {left}
@@ -25,6 +27,8 @@ const CustomInput: FC<
         style={styles.inputContainer}
         {...props}
         placeholderTextColor="#ccc"
+        value={query}
+        onChangeText={setQuery}
       />
       <View style={styles.icon}>
         {props.value?.length != 0 && right && (
