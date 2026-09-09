@@ -43,6 +43,7 @@ export const loginCustomer = async (req, reply) => {
       customer,
     });
   } catch (error) {
+    console.log("customer login error", error);
     return reply.status(500).send({
       message: error,
     });
