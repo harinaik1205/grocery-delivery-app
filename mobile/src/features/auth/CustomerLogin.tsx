@@ -85,6 +85,7 @@ const CustomerLogin = () => {
       }
     }
   };
+
   return (
     // <GestureHandlerRootView style={styles.container}>
     <View style={styles.container}>
@@ -129,6 +130,7 @@ const CustomerLogin = () => {
               <CustomButton
                 title="Continue"
                 onPress={handleSendOtp}
+                // disabled={phoneNumber?.length != 10}
                 disabled={phoneNumber?.length != 10}
                 loading={loading}
               />

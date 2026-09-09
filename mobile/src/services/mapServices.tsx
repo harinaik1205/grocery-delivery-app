@@ -81,8 +81,7 @@ export const getPlaceDetails = async (
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Goog-Api-Key':
-          GOOGLE_MAPS_API_KEY! || 'AIzaSyBhJSavFevtZhpOJVr-wVYa6K4rYzBRUJg',
+        'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY!,
       },
     });
 

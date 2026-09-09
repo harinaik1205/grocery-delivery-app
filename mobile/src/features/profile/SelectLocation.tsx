@@ -1,5 +1,6 @@
 import {
   Alert,
+  Keyboard,
   Modal,
   Pressable,
   ScrollView,
@@ -26,6 +27,10 @@ import {
   getPlaces,
   reverseGeocode,
 } from '@services/mapServices';
+
+const LATITUDE_DELTA = 0.005;
+
+const LONGITUDE_DELTA = 0.005;
 
 interface InitialRegion {
   latitude: number;
@@ -82,8 +87,15 @@ const SelectLocationScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (!query || query.length <= 2) return;
-    fetchPlaces(query);
+    if (!query || query.length <= 2) {
+      setSuggestions([]);
+      return;
+    }
+    const timeoutId = setTimeout(() => {
+      fetchPlaces(query);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
   }, [query]);
 
   const fetchPlaces = async (inputText: string) => {
@@ -114,8 +126,8 @@ const SelectLocationScreen = () => {
         const region = {
           latitude,
           longitude,
-          latitudeDelta: 0.005,
-          longitudeDelta: 0.005,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
         };
 
         setRegion(region);
@@ -137,16 +149,18 @@ const SelectLocationScreen = () => {
   }) => {
     try {
       const geocoding = await getPlaceDetails(item?.placeId);
-      setRegion({
+      console.log('geocoding', geocoding);
+      const newRegion = {
         latitude: geocoding?.lat,
         longitude: geocoding?.lng,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      });
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      };
+      setRegion(newRegion);
       setQuery('');
       setSuggestions([]);
       setShowModal(false);
-      mapRef.current?.animateToRegion(region, 200);
+      mapRef.current?.animateToRegion(newRegion, 1000);
     } catch (error) {
       Alert.alert('Error while fetching place details', JSON.stringify(error));
       console.log('Error while fetching place details', error);
@@ -167,10 +181,8 @@ const SelectLocationScreen = () => {
       >
         {/* search bar */}
         <Pressable style={styles.searchBar} onPress={() => setShowModal(true)}>
-          <CustomInput
-            left={<IonIcon name="search" size={20} />}
-            placeholder={'Search for apartment, street name...'}
-          />
+          <IonIcon name="search" size={20} />
+          <CustomText>Search for appartment, street</CustomText>
         </Pressable>
 
         {/* map view */}
@@ -185,7 +197,7 @@ const SelectLocationScreen = () => {
             ref={mapRef}
             mapType="standard"
             initialRegion={region}
-            onRegionChange={region => {
+            onRegionChangeComplete={region => {
               setRegion(region);
             }}
           />
@@ -256,13 +268,14 @@ const SelectLocationScreen = () => {
             <CustomInput
               left={<IonIcon name="search" size={20} />}
               placeholder={'Search for apartment, street name...'}
-              query={query}
-              setQuery={setQuery}
+              value={query}
+              onChangeText={setQuery}
             />
           </View>
           <ScrollView
             style={styles.modalBottomContainer}
             showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
               gap: 10,
             }}
@@ -310,7 +323,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'fff',
   },
   searchBar: {
-    paddingHorizontal: 10,
+    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: Colors.border,
+    margin: 10,
   },
   markerFixed: {
     position: 'absolute',
