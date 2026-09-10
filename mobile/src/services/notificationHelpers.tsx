@@ -11,20 +11,34 @@ import {
 } from 'react-native-permissions';
 import { saveFcmToken } from './notification.services';
 import notifee, {
+  AndroidCategory,
   AndroidImportance,
   EventType,
   Notification,
 } from '@notifee/react-native';
 import { navigate } from '@utils/NavigationUtils';
+import { Colors } from '@utils/Constants';
 
 export const isIos = () => Platform.OS === 'ios';
 export const isAndroid = () => Platform.OS === 'android';
 export const getPlatFormVersion = () => Number(Platform.Version);
 
-export const channelId = 'orderStatus';
-export const channelName = 'Order Status';
+// export const channelId = 'orderStatus';
+// export const channelName = 'Order Status';
 
-export const showForeGroundNotification = (message: any) => {
+export const createChannel = async (
+  channelId = 'default',
+  channelName = 'Default',
+) => {
+  return await notifee.createChannel({
+    id: channelId,
+    name: channelName,
+    badge: true,
+    importance: AndroidImportance.HIGH,
+  });
+};
+
+export const showForeGroundNotification = (message: any, channelId: string) => {
   if (!message || !message?.notification) return;
 
   const { title, body } = message.notification;
@@ -36,6 +50,19 @@ export const showForeGroundNotification = (message: any) => {
     android: {
       channelId,
       importance: AndroidImportance.HIGH,
+      color: '#FDCC00',
+      largeIcon:
+        'https://res.cloudinary.com/deyffbvwb/image/upload/v1788766061/appstore_igvjjb.jpg',
+      actions: [
+        {
+          title: '<b>Track Order</b> &#128111;',
+          pressAction: { id: 'orderStatus' },
+        },
+        {
+          title: '<p style="color: #f44336;"><b>Cry</b> &#128557;</p>',
+          pressAction: { id: 'cry' },
+        },
+      ],
       pressAction: {
         id: 'default',
       },
@@ -94,22 +121,24 @@ export const setNotificationHandler = async () => {
   });
 
   //create channel for android
-  notifee.isChannelCreated(channelId).then(isCreated => {
-    if (!isCreated) {
-      notifee.createChannel({
-        id: channelId,
-        name: channelName,
-        sound: 'default',
-      });
-    }
-  });
+  // notifee.isChannelCreated(channelId).then(isCreated => {
+  //   if (!isCreated) {
+  //     notifee.createChannel({
+  //       id: channelId,
+  //       name: channelName,
+  //       sound: 'default',
+  //     });
+  //   }
+  // });
+
+  const channelId = await createChannel('order', 'Order');
 
   //Handle Local notification click on foreground state
 
   const unsubscribeNotifee = notifee.onForegroundEvent(({ type, detail }) => {
     switch (type) {
       case EventType.DISMISSED:
-        Alert.alert('user dismissed notification', detail?.notification?.title);
+        // Alert.alert('user dismissed notification', detail?.notification?.title);
         break;
       case EventType.PRESS:
         const { type } = (detail?.notification?.data ?? {}) as {
@@ -131,7 +160,7 @@ export const setNotificationHandler = async () => {
   //foreground state message handler
   const unsubscribeMessage = getMessaging().onMessage(remoteMessage => {
     console.log('A new FCM message arrived in foreground!', remoteMessage);
-    showForeGroundNotification(remoteMessage);
+    showForeGroundNotification(remoteMessage, channelId);
   });
 
   //Handle the click of notification in case of app background
