@@ -6,6 +6,7 @@ import fastifySocketIO from "@wick_studio/fastify-socket.io";
 import { registerRoutes } from "./src/routes/index.js";
 import { admin, buildAdminRouter } from "./src/config/setup.js";
 import { initializeFirebaseApp } from "./src/config/firebase.js";
+import { assetLinks } from "./src/config/assetsLink.js";
 
 const start = async () => {
   try {
@@ -24,6 +25,13 @@ const start = async () => {
     });
 
     await registerRoutes(app);
+    app.get("/.well-known/assetlinks.json", (req, res) => {
+      res.status(200).type("application/json").send(JSON.stringify(assetLinks));
+    });
+
+    app.get("/", (req, res) => {
+      res.send("Welcome To LocalMart");
+    });
 
     await buildAdminRouter(app);
 
