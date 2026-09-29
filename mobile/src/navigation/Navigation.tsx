@@ -19,9 +19,20 @@ import SelectLocationScreen from '@features/profile/SelectLocation';
 
 const Stack = createNativeStackNavigator();
 
+const linking = {
+  prefixes: [
+    'groceryapp://', // Or `Linking.createURL('/')` for Expo apps
+  ],
+  config: {
+    screens: {
+      ProductCategories: 'ProductCategories',
+    },
+  },
+};
+
 const Navigation = () => {
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={navigationRef} linking={linking}>
       <Stack.Navigator
         initialRouteName="SplashScreen"
         screenOptions={{
