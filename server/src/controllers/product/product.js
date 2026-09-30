@@ -18,3 +18,25 @@ export const getProductsByCategoryId = async (req, reply) => {
     });
   }
 };
+
+export const getProductById = async (req, reply) => {
+  const { productId } = req.params;
+  try {
+    const product = await Product.findById(productId).populate("category");
+    if (!product) {
+      return reply.status(404).send({
+        success: false,
+        message: "Product not found.",
+      });
+    }
+    return reply.status(200).send({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    return reply.status(500).send({
+      success: false,
+      message: error,
+    });
+  }
+};
