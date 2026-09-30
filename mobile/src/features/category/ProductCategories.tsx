@@ -8,7 +8,6 @@ import {
   getProductsByCategoryId,
 } from '../../services/productServices';
 import ProductList from './ProductList';
-import axios from 'axios';
 import withCart from '@features/cart/WithCart';
 
 const ProductCategories = () => {

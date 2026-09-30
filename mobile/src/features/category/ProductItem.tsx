@@ -1,10 +1,11 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { FC } from 'react';
 import { screenHeight } from '@utils/Scaling';
 import { Colors, Fonts } from '@utils/Constants';
 import CustomText from '@components/ui/CustomText';
 import { RFValue } from 'react-native-responsive-fontsize';
 import UniversalAdd from '@components/ui/UniversalAdd';
+import { useNavigation } from '@react-navigation/native';
 
 interface ProductItemsProps {
   item: any;
@@ -13,9 +14,17 @@ interface ProductItemsProps {
 
 const ProductItem: FC<ProductItemsProps> = ({ item, index }) => {
   const isSecondColumn = index % 2 != 0;
+  const navigation = useNavigation<any>();
 
   return (
-    <View style={[styles.container, { marginRight: isSecondColumn ? 10 : 0 }]}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('ProductDetails', {
+          productId: item?._id,
+        })
+      }
+      style={[styles.container, { marginRight: isSecondColumn ? 10 : 0 }]}
+    >
       <View style={styles.imageContainer}>
         <Image source={{ uri: item?.image }} style={styles.image} />
       </View>
@@ -58,7 +67,7 @@ const ProductItem: FC<ProductItemsProps> = ({ item, index }) => {
           <UniversalAdd item={item} />
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

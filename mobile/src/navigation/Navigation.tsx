@@ -16,12 +16,14 @@ import Profile from '@features/profile/Profile';
 import DeliveryMap from '@features/delivery/DeliveryMap';
 import AddressBookScreen from '@features/profile/AddressBookScreen';
 import SelectLocationScreen from '@features/profile/SelectLocation';
+import ProductDetails from '@features/category/ProductDetails';
 
 const Stack = createNativeStackNavigator();
 
 const linking = {
   prefixes: [
-    'groceryapp://', // Or `Linking.createURL('/')` for Expo apps
+    'groceryapp://',
+    'https://grocery-delivery-app-deeplinking.vercel.app',
   ],
   config: {
     screens: {
@@ -55,6 +57,7 @@ const Navigation = () => {
           component={DeliveryLogin}
         />
         <Stack.Screen name="ProductDashboard" component={ProductDashboard} />
+        <Stack.Screen name="ProductDetails" component={ProductDetails} />
         <Stack.Screen name="DeliveryDashboard" component={DeliveryDashboard} />
         <Stack.Screen name="ProductCategories" component={ProductCategories} />
         <Stack.Screen name="ProductOrder" component={ProductOrder} />

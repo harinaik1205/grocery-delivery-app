@@ -20,3 +20,12 @@ export const getProductsByCategoryId = async (id: string) => {
     return [];
   }
 };
+
+export const getProductDetails = async (id: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/product/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
