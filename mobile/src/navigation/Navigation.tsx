@@ -28,6 +28,7 @@ const linking = {
   config: {
     screens: {
       ProductCategories: 'ProductCategories',
+      ProductDetails: 'product/:productId',
     },
   },
 };

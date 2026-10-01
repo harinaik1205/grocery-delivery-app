@@ -1,7 +1,11 @@
 import {
   ActivityIndicator,
+  Alert,
   Image,
+  Platform,
+  Pressable,
   ScrollView,
+  // Share,
   StatusBar,
   StyleSheet,
   Text,
@@ -20,6 +24,9 @@ import { screenHeight, screenWidth } from '@utils/Scaling';
 import CustomText from '@components/ui/CustomText';
 import UniversalAdd from '@components/ui/UniversalAdd';
 const CategoryProducts = React.lazy(() => import('./CategoryProducts'));
+
+import Share from 'react-native-share';
+import { downloadImage, urlToBase64Fetch } from '@utils/utility';
 
 interface ProductType {
   _id: string;
@@ -61,6 +68,26 @@ const ProductDetails = ({ route }: any) => {
       setLoading(false);
     }
   };
+
+  const onShare = async () => {
+    // Alert.alert('share clicked');
+    const base64Url = await urlToBase64Fetch(product?.image!);
+    try {
+      const { path, mime } = await downloadImage(
+        product?.image!,
+        product?._id!,
+      );
+      await Share.open({
+        title: product?.name,
+        message: `Check out this product on LocalMart - ${product?.name}\nhttps://grocery-delivery-app-deeplinking.vercel.app/product/${product?._id}\n`,
+        url: Platform.OS === 'android' ? `file://${path}` : path,
+        type: mime,
+      });
+    } catch (error) {
+      Alert.alert(JSON.stringify(error));
+    }
+  };
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -92,9 +119,9 @@ const ProductDetails = ({ route }: any) => {
               <View style={styles.iconContainer}>
                 <Feather name="heart" size={20} />
               </View>
-              <View style={styles.iconContainer}>
+              <TouchableOpacity onPress={onShare} style={styles.iconContainer}>
                 <Feather name="share" size={20} />
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

@@ -33,13 +33,14 @@ const CategoryProducts: FC<CategoryProductsProps> = ({ categoryId }) => {
       setProductsLoading(false);
     }
   };
+  if (productsLoading) return;
   return (
     <View style={styles.container}>
       <CustomText variant="h6" style={styles.heading}>
         Top products in this category
       </CustomText>
       <FlashList
-        data={products.slice(0, 6)}
+        data={products?.slice(0, 6)}
         renderItem={({ item, index }) => (
           <ProductItem index={index} item={item} />
         )}
