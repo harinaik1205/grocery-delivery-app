@@ -8,18 +8,26 @@ import { RFValue } from 'react-native-responsive-fontsize';
 
 interface Props {
   item: any;
+  title?: string;
+  variant?: 'default' | 'primary' | 'outline';
 }
 
-const UniversalAdd: FC<Props> = ({ item }) => {
-  const count = useCartStore(state => state.getItemCount(item._id));
+const UniversalAdd: FC<Props> = ({ item, title, variant = 'default' }) => {
+  const count = useCartStore(state => state.getItemCount(item?._id));
   const { addItem, removeItem } = useCartStore();
 
   return (
     <View
       style={[
         styles.container,
+        variant === 'primary' && styles.addToCartBtn,
         {
-          backgroundColor: count === 0 ? '#fff' : Colors.secondary,
+          backgroundColor:
+            variant === 'primary'
+              ? Colors.secondary
+              : count === 0
+              ? '#fff'
+              : Colors.secondary,
         },
       ]}
     >
@@ -28,9 +36,12 @@ const UniversalAdd: FC<Props> = ({ item }) => {
           <CustomText
             variant="h9"
             fontFamily={Fonts.SemiBold}
-            style={styles.addText}
+            style={[
+              styles.addText,
+              variant === 'primary' && styles.primaryText,
+            ]}
           >
-            ADD
+            {title || 'ADD'}
           </CustomText>
         </Pressable>
       ) : (
@@ -64,6 +75,17 @@ const styles = StyleSheet.create({
     borderColor: Colors.secondary,
     width: 65,
     borderRadius: 8,
+  },
+  primaryText: {
+    color: '#fff',
+  },
+  addToCartBtn: {
+    width: 150,
+    height: 50,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.secondary,
   },
   add: {
     width: '100%',

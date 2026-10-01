@@ -5,9 +5,10 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { getProductDetails } from '@services/productServices';
 import { Colors } from '@utils/Constants';
 import {
@@ -17,6 +18,8 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import { screenHeight, screenWidth } from '@utils/Scaling';
 import CustomText from '@components/ui/CustomText';
+import UniversalAdd from '@components/ui/UniversalAdd';
+const CategoryProducts = React.lazy(() => import('./CategoryProducts'));
 
 interface ProductType {
   _id: string;
@@ -38,6 +41,7 @@ const ProductDetails = ({ route }: any) => {
   const [product, setProduct] = useState<ProductType>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     fetchProductById();
   }, [productId]);
@@ -135,19 +139,52 @@ const ProductDetails = ({ route }: any) => {
             </View>
           </View>
         </View>
+
+        {/* Top products in this category */}
+        <Suspense
+          fallback={
+            <ActivityIndicator size={'large'} color={Colors.secondary} />
+          }
+        >
+          {/* seperate component for top products in this category can be added here, which will be lazy loaded. This will improve the performance of the ProductDetails screen by loading this section only when needed. */}
+          <CategoryProducts categoryId={product?.category?._id} />
+        </Suspense>
       </ScrollView>
-      <View style={styles.actionBtnContainer}>
-        <View style={styles.flexRowGap}>
-          <CustomText fonSize={12} style={styles.price}>
-            ₹{product?.price}
+
+      {/* action button */}
+      <View
+        style={[
+          styles.actionBtnContainer,
+          {
+            paddingBottom: insets.bottom,
+            paddingLeft: insets.left + 10,
+            paddingRight: insets.right + 10,
+          },
+        ]}
+      >
+        <View>
+          <CustomText
+            variant="h8"
+            style={[styles.quantity, { paddingBottom: 0 }]}
+          >
+            {product?.quantity}
           </CustomText>
-          <CustomText variant="h9" style={styles.discountPrice}>
-            MRP{' '}
-            <Text style={{ textDecorationLine: 'line-through' }}>
-              ₹{product?.discountPrice}
-            </Text>
+          <View style={styles.flexRowGap}>
+            <CustomText fonSize={12} style={styles.price}>
+              ₹{product?.price}
+            </CustomText>
+            <CustomText variant="h9" style={styles.discountPrice}>
+              MRP{' '}
+              <Text style={{ textDecorationLine: 'line-through' }}>
+                ₹{product?.discountPrice}
+              </Text>
+            </CustomText>
+          </View>
+          <CustomText variant="h8" style={styles.quantity}>
+            Inclusive of all taxes
           </CustomText>
         </View>
+        <UniversalAdd item={product} title="ADD TO CART" variant="primary" />
       </View>
     </View>
   );
@@ -156,8 +193,20 @@ const ProductDetails = ({ route }: any) => {
 export default ProductDetails;
 
 const styles = StyleSheet.create({
+  addToCartBtn: {
+    width: 150,
+    height: 50,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.secondary,
+  },
+  actionBtnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   actionBtnContainer: {
-    height: 70,
+    // height: 70,
     width: screenWidth,
     // borderTopWidth: 1,
     // borderTopColor: Colors.border,
