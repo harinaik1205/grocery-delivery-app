@@ -3,6 +3,8 @@ import {
   Image,
   Platform,
   ScrollView,
+  // Share,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -22,10 +24,15 @@ import { useAuthStore } from '@state/authStore';
 import ArrowButton from './ArrowButton';
 import { createOrder } from '../../services/orderServices';
 import { navigate } from '@utils/NavigationUtils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Feather from 'react-native-vector-icons/Feather';
+import { downloadImage } from '@utils/utility';
+import Share from 'react-native-share';
 
 const ProductOrder = () => {
-  const { getTotalPrice, cart, clearCart } = useCartStore();
+  const { getTotalPrice, cart, clearCart, getItemCount } = useCartStore();
   const { user, currentOrder, setCurrentOrder } = useAuthStore();
+  const insets = useSafeAreaInsets();
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -63,10 +70,63 @@ const ProductOrder = () => {
   };
 
   const totalPrice = getTotalPrice();
+  // const totalItems = getItemCount();
+
+  const onShare = async () => {
+    // Alert.alert('Share Cart', 'Do you want to share your cart with others?');
+
+    try {
+      const imageUrl = cart[0]?.item?.image;
+      const { path, mime } = await downloadImage(imageUrl!, cart[0]?.item?._id);
+      await Share.open({
+        title: 'Cart',
+        message: `Hi, check out my cart with ${cart.length} items and total price of ₹${totalPrice}. Please review and make the payment to place the order.\nhttps://grocery-delivery-app-deeplinking.vercel.app/share=cart/${cart[0]?.item?._id}\n`,
+        url: Platform.OS === 'android' ? `file://${path}` : path,
+        type: mime,
+        subject: 'Cart',
+      });
+    } catch (error) {
+      console.log('==============');
+      console.log('==============');
+      console.log('==============');
+      console.log('Error while sharing', error);
+      console.log('==============');
+      console.log('==============');
+      console.log('==============');
+      Alert.alert('Error while sharing', JSON.stringify(error));
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <CustomHeader title="Checkout" />
+      <StatusBar barStyle="dark-content" />
+      {/* <CustomHeader title="Checkout" /> */}
+      {/* header */}
+      <View
+        style={[
+          styles.flexRowBetween,
+          styles.headerContainer,
+          { paddingTop: insets.top, borderRadius: 0 },
+        ]}
+      >
+        <View style={styles.flexRow}>
+          <View style={styles.iconContainer}>
+            <Feather name="chevron-left" size={20} />
+          </View>
+          <CustomText variant="h6" fontFamily={Fonts.SemiBold}>
+            Checkout
+          </CustomText>
+        </View>
+        <View style={styles.flexRow}>
+          <View style={styles.iconContainer}>
+            <Feather name="search" size={20} />
+          </View>
+          <TouchableOpacity onPress={onShare} style={styles.iconContainer}>
+            <Feather name="share" size={20} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      {/* <Text>{JSON.stringify(cart[0].item?.image)}</Text> */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <OrderList />
 
@@ -170,6 +230,32 @@ const ProductOrder = () => {
 export default ProductOrder;
 
 const styles = StyleSheet.create({
+  iconContainer: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    borderColor: Colors.border,
+    backgroundColor: '#fff',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.6,
+    shadowRadius: 2,
+    shadowColor: Colors.text,
+    elevation: 2,
+  },
+  headerContainer: {
+    padding: 10,
+    backgroundColor: '#fff',
+    shadowColor: Colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.6,
+    shadowRadius: 2,
+    elevation: 2,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

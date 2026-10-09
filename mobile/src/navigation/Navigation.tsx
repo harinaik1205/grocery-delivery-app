@@ -29,6 +29,7 @@ const linking = {
     screens: {
       ProductCategories: 'ProductCategories',
       ProductDetails: 'product/:productId',
+      ProductOrder: 'share=cart/:cartId',
     },
   },
 };
