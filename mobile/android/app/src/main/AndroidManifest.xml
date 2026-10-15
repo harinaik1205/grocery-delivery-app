@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+     <!-- required for react-native-share base64 sharing -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
       android:name=".MainApplication"
@@ -16,7 +18,7 @@
       android:usesCleartextTraffic="true"
       android:hardwareAccelerated="true"
       android:supportsRtl="true">
-       <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBhJSavFevtZhpOJVr-wVYa6K4rYzBRUJg" />
+       <meta-data android:name="com.google.android.geo.API_KEY" android:value="${GOOGLE_MAPS_API_KEY}" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

@@ -19,6 +19,7 @@ import DeliveryOrderItem from './DeliveryOrderItem';
 import { FlashList } from '@shopify/flash-list';
 import CustomText from '@components/ui/CustomText';
 import withLiveOrder from './withLiveOrder';
+import Config from 'react-native-config';
 
 const DeliveryDashboard = () => {
   const { user, setUser } = useAuthStore();
@@ -101,6 +102,9 @@ const DeliveryDashboard = () => {
             return (
               <View style={styles.center}>
                 <CustomText>No Orders found yet</CustomText>
+                <CustomText>{Config.GOOGLE_MAPS_API_KEY}</CustomText>
+                <CustomText>{JSON.stringify(Config)}</CustomText>
+                <CustomText>{Config.ENV}</CustomText>
               </View>
             );
           }}
@@ -108,6 +112,8 @@ const DeliveryDashboard = () => {
           keyExtractor={(item: any) => item?.orderId}
           contentContainerStyle={styles.flatlistContainer}
         />
+
+        {/* <CustomText>{JSON.stringify(Config)}</CustomText> */}
       </View>
     </View>
   );

@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,7 +13,7 @@ import { Colors, Fonts } from '@utils/Constants';
 interface CustomButtonProps {
   onPress: () => void;
   title: string;
-  disabled: boolean;
+  disabled?: boolean;
   loading: boolean;
 }
 const CustomButton: FC<CustomButtonProps> = ({
@@ -23,8 +24,11 @@ const CustomButton: FC<CustomButtonProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      onPress={onPress}
-      disabled={disabled}
+      onPress={() => {
+        // Alert.alert('OTP Sent', `An OTP has been sent to +91 ${title}`);
+        onPress();
+      }}
+      // disabled={disabled}
       activeOpacity={0.8}
       style={[
         styles.btn,

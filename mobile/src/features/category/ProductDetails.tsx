@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Alert,
+  Button,
   Image,
   Platform,
   Pressable,
@@ -14,7 +15,7 @@ import {
 } from 'react-native';
 import React, { Suspense, useEffect, useState } from 'react';
 import { getProductDetails } from '@services/productServices';
-import { Colors } from '@utils/Constants';
+import { Colors, images } from '@utils/Constants';
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -26,7 +27,12 @@ import UniversalAdd from '@components/ui/UniversalAdd';
 const CategoryProducts = React.lazy(() => import('./CategoryProducts'));
 
 import Share from 'react-native-share';
-import { downloadImage, urlToBase64Fetch } from '@utils/utility';
+import {
+  downloadImage,
+  getErrorString,
+  toStandardBase64,
+  urlToBase64Fetch,
+} from '@utils/utility';
 
 interface ProductType {
   _id: string;
@@ -48,6 +54,7 @@ const ProductDetails = ({ route }: any) => {
   const [product, setProduct] = useState<ProductType>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState('');
 
   useEffect(() => {
     fetchProductById();
@@ -72,6 +79,7 @@ const ProductDetails = ({ route }: any) => {
   const onShare = async () => {
     // Alert.alert('share clicked');
     const base64Url = await urlToBase64Fetch(product?.image!);
+    const imgUrl = toStandardBase64(base64Url);
     try {
       const { path, mime } = await downloadImage(
         product?.image!,
@@ -88,6 +96,32 @@ const ProductDetails = ({ route }: any) => {
     }
   };
 
+  /**
+   * This function share an image passed using the
+   * url param
+   */
+  const shareSingleImage = async () => {
+    const base64Url = await urlToBase64Fetch(product?.image!);
+    const imgUrl = toStandardBase64(base64Url);
+    // Alert.alert('Image URL', base64Url);
+    const shareOptions = {
+      title: 'Share file',
+      url: images.image1,
+      message: `Check out this product on LocalMart - ${product?.name}\nhttps://grocery-delivery-app-deeplinking.vercel.app/product/${product?._id}\n`,
+      // type: 'image/png',
+      // filename: 'image1',
+      failOnCancel: false,
+    };
+
+    try {
+      const ShareResponse = await Share.open(shareOptions);
+      console.log('Result =>', ShareResponse);
+      setResult(JSON.stringify(ShareResponse, null, 2));
+    } catch (error) {
+      console.log('Error =>', error);
+      setResult('error: '.concat(getErrorString(error)));
+    }
+  };
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -176,6 +210,9 @@ const ProductDetails = ({ route }: any) => {
           {/* seperate component for top products in this category can be added here, which will be lazy loaded. This will improve the performance of the ProductDetails screen by loading this section only when needed. */}
           <CategoryProducts categoryId={product?.category?._id} />
         </Suspense>
+
+        <Button title="Share Single Image" onPress={shareSingleImage} />
+        <CustomText>{result}</CustomText>
       </ScrollView>
 
       {/* action button */}

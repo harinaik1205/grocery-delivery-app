@@ -56,6 +56,7 @@ const CustomerLogin = () => {
   const handleSendOtp = async () => {
     Keyboard.dismiss();
     setLoading(true);
+    Alert.alert('OTP Sent', `An OTP has been sent to +91 ${phoneNumber}`);
     try {
       await customerLogin(phoneNumber);
       await syncFcmToken();
@@ -131,7 +132,6 @@ const CustomerLogin = () => {
                 title="Continue"
                 onPress={handleSendOtp}
                 // disabled={phoneNumber?.length != 10}
-                disabled={phoneNumber?.length != 10}
                 loading={loading}
               />
             </View>
